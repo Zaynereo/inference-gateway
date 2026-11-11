@@ -1,0 +1,21 @@
+services:
+  gateway:
+    build: .
+    ports:
+      - "8080:8080"
+    environment:
+      LOG_LEVEL: INFO
+      MAX_QUEUE_SIZE: 64
+      MAX_BATCH_SIZE: 8
+      BATCH_WAIT_MS: 50
+      STUB_LATENCY_MS: 25
+      MAX_RETRIES: 2
+      RETRY_BASE_DELAY_MS: 50
+      UPSTREAM_TIMEOUT_SECONDS: 5
+      API_KEYS_JSON: '{"demo-key-1": {"limit_per_minute": 120}, "demo-key-2": {"limit_per_minute": 30}}'
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8080/health/ready')"]
+      interval: 10s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
